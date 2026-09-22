@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>원광대학교 한의과대학 경혈학 관련 교과목 학습일지 작성 가이드</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --info: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Noto Sans KR', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.3em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 50px;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            border-left: 5px solid var(--primary);
+            padding: 30px;
+            margin-bottom: 50px;
+            border-radius: 8px;
+        }
+
+        .toc h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .toc ol {
+            list-style-position: inside;
+            padding-left: 20px;
+        }
+
+        .toc li {
+            margin-bottom: 12px;
+            cursor: pointer;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .toc a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .toc a:hover {
+            text-decoration: underline;
+            color: var(--secondary);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-top: 60px;
+            margin-bottom: 25px;
+            font-size: 2em;
+            border-bottom: 3px solid var(--primary);
+            padding-bottom: 15px;
+            scroll-margin-top: 20px;
+        }
+
+        h3 {
+            color: var(--secondary);
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        h4 {
+            color: #555;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            background: #f5f5f5;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        ul, ol {
+            margin-left: 30px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 12px;
+        }
+
+        .box {
+            border-radius: 8px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 5px solid;
+        }
+
+        .box-danger {
+            background: #ffebee;
+            border-left-color: var(--danger);
+        }
+
+        .box-danger h3 {
+            color: var(--danger);
+        }
+
+        .box-success {
+            background: #eafaf1;
+            border-left-color: var(--success);
+        }
+
+        .box-success h3 {
+            color: var(--success);
+        }
+
+        .box-warning {
+            background: #fef5e7;
+            border-left-color: var(--warning);
+        }
+
+        .box-warning h3 {
+            color: var(--warning);
+        }
+
+        .box-info {
+            background: #ebf5fb;
+            border-left-color: var(--info);
+        }
+
+        .box-info h3 {
+            color: var(--info);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .badge-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .badge-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #c0392b;
+        }
+
+        .code-block code {
+            background: transparent;
+            color: #ecf0f1;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: white;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .emoji {
+            font-size: 1.3em;
+            margin-right: 8px;
+        }
+
+        .example-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        .faq-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-left: 4px solid var(--info);
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .faq-item strong {
+            color: var(--info);
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .grid-item {
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+
+        .grid-item-do {
+            background: #eafaf1;
+            border-color: var(--success);
+        }
+
+        .grid-item-do h4 {
+            background: transparent;
+            color: var(--success);
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .grid-item-dont {
+            background: #ffebee;
+            border-color: var(--danger);
+        }
+
+        .grid-item-dont h4 {
+            background: transparent;
+            color: var(--danger);
+            padding: 0;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 40px;
+            text-align: center;
+            border-top: 2px solid #ecf0f1;
+            color: #666;
+        }
+
+        .footer h3 {
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+            .header {
+                page-break-after: always;
+            }
+            h2 {
+                page-break-before: always;
+            }
+            .print-only {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            .content {
+                padding: 30px 20px;
+            }
+            .header {
+                padding: 40px 20px;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            table {
+                font-size: 0.9em;
+            }
+            td, th {
+                padding: 10px;
+            }
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 999;
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .back-to-top:hover {
+            background: var(--secondary);
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><span class="emoji">📚</span>원광대학교 한의과대학 경혈학 관련 교과목 학습일지 작성 가이드</h1>
+            <p>AI 활용 윤리까지 모두 포함한 최종 가이드</p>
+            <p style="margin-top: 20px; font-size: 0.95em; opacity: 0.85;">원광대학교 한의과대학 | 2026년 9월</p>
+        </div>
+
+        <div class="content">
+            <!-- 목차 -->
+            <div class="toc">
+                <h2 style="margin-top: 0; border: none; padding: 0; color: var(--primary);">📑 목차</h2>
+                <ol>
+                    <li><a href="#section1">제출 기본 정보</a></li>
+                    <li><a href="#section2">작성 내용 구성</a></li>
+                    <li><a href="#section3">문서 형식 및 작성 규칙</a></li>
+                    <li><a href="#section4">출처 및 참고문헌 작성법</a></li>
+                    <li><a href="#section5">AI 활용 시 필수 주의사항</a></li>
+                    <li><a href="#section6">AI 활용이 허용되는 경우</a></li>
+                    <li><a href="#section7">AI 활용 시 올바른 절차</a></li>
+                    <li><a href="#section8">AI 활용 시 기재 사항</a></li>
+                    <li><a href="#section9">평가 기준</a></li>
+                    <li><a href="#section10">제출 전 체크리스트</a></li>
+                    <li><a href="#section11">자주 묻는 질문</a></li>
+                </ol>
+            </div>
+
+            <!-- 1. 제출 기본 정보 -->
+            <section id="section1">
+                <h2><span class="emoji">📋</span>제출 기본 정보</h2>
+
+                <h3>파일명 규칙</h3>
+                <div class="box box-info">
+                    <p><strong>형식:</strong> <code>주차_주제_학번_이름</code> (파일형식: PDF)</p>
+                    <p><strong>예시:</strong> <code>01-02주_경혈학기초_2021****_홍길동.pdf</code></p>
+                </div>
+
+                <h3>제출 방법 및 마감</h3>
+                <div class="box box-info">
+                    <p><strong>제출처:</strong> 구글 클래스룸 과제물</p>
+                    <p><strong>마감:</strong> 사전에 안내된 주차별 일요일까지</p>
+                </div>
+            </section>
+
+            <!-- 2. 작성 내용 구성 -->
+            <section id="section2">
+                <h2><span class="emoji">📝</span>작성 내용 구성</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>구분</th>
+                            <th>비중</th>
+                            <th>주요 내용</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1️⃣ 수업 내용 요약</strong></td>
+                            <td><span class="badge badge-info">30%</span></td>
+                            <td>동영상 수업 내용을 자신의 말로 정리</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2️⃣ 자가 학습<br>(탐구 학습)</strong></td>
+                            <td><span class="badge badge-info">40%</span></td>
+                            <td>논문/자료 활용한 자신의 탐구 과정</td>
+                        </tr>
+                        <tr>
+                            <td><strong>3️⃣ 요약 및 토론</strong></td>
+                            <td><span class="badge badge-info">30%</span></td>
+                            <td>종합 정리 및 비판적 의견</td>
+                        </tr>
+                        <tr>
+                            <td><strong>4️⃣ 출처 및 참고 문헌 표기<br>(AI 활용 표기 포함)</strong></td>
+                            <td><span class="badge badge-warning">필수</span></td>
+                            <td>모든 참고 자료의 출처 명시 및 AI 활용 여부 기재</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>각 섹션별 상세 설명</h3>
+
+                <h4>1️⃣ 수업 내용 요약 (30%)</h4>
+                <ul>
+                    <li>온라인 동영상 수업 내용을 요약 정리</li>
+                    <li><strong>평가 기준:</strong> 동영상 이수 여부를 증빙할 수 있어야 함</li>
+                    <li>학습한 내용을 자신의 말로 정리할 것</li>
+                </ul>
+
+                <h4>2️⃣ 자가 학습 (탐구 학습, 40%)</h4>
+                <ul>
+                    <li>경혈학 주제와 관련된 <strong>논문 또는 자료 최소 1개 이상</strong> 활용</li>
+                    <li><strong>작성 방향:</strong> 수업 내용에서 나온 호기심과 질문을 바탕으로 객관적이고 과학적인 자료 활용</li>
+                    <li>단순 요약이 아닌 <strong>자신의 탐구 과정과 발견 내용</strong> 기재</li>
+                </ul>
+
+                <h4>3️⃣ 요약 및 토론 (30%)</h4>
+                <ul>
+                    <li>수업 내용 + 자가 학습 내용을 종합하여 최종 정리</li>
+                    <li>배운 내용에 대한 <strong>과학적이고 비판적인 의견</strong> 작성</li>
+                    <li>추가 궁금증이나 더 알고 싶은 부분 기술</li>
+                </ul>
+            </section>
+
+            <!-- 3. 문서 형식 -->
+            <section id="section3">
+                <h2><span class="emoji">🎨</span>문서 형식 및 작성 규칙</h2>
+
+                <h3>글자 크기 및 스타일</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th>크기</th>
+                            <th>스타일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>제목</td>
+                            <td>12pt</td>
+                            <td><strong>Bold</strong></td>
+                        </tr>
+                        <tr>
+                            <td>소제목/소주제</td>
+                            <td>11pt</td>
+                            <td><strong>Bold</strong></td>
+                        </tr>
+                        <tr>
+                            <td>본문</td>
+                            <td>10pt</td>
+                            <td>일반</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>줄간격 설정</h3>
+                <div class="box box-info">
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li><strong>아래한글:</strong> 150%</li>
+                        <li><strong>MS Word:</strong> 1배</li>
+                        <li><strong>단락 간격:</strong> 단락 위·아래 모두 0 (기본값 사용)</li>
+                    </ul>
+                </div>
+
+                <h3>이미지 삽입 시 주의사항</h3>
+                <div class="box box-warning">
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li><strong>📸 크기:</strong> 1개 이미지가 1페이지의 1/4을 초과하지 않을 것</li>
+                        <li><strong>📌 출처 표시:</strong> 모든 이미지에 출처를 명시할 것 (필수)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 4. 참고문헌 -->
+            <section id="section4">
+                <h2><span class="emoji">📚</span>출처 및 참고문헌 작성법</h2>
+
+                <h3>필수 기재 사항</h3>
+                <div class="box box-success">
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li>✅ 모든 참고 자료, 논거에 대해 <strong>출처를 명시</strong>할 것 (각주 권고)</li>
+                        <li>✅ <strong>AI 활용 여부도 반드시 기재</strong>할 것</li>
+                    </ul>
+                </div>
+
+                <h3>참고문헌 작성 방식</h3>
+                <div class="box box-info">
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li><strong>본문 인용:</strong> 인용문 끝에 어깨번호를 <code>[1]</code> 형태로 표시</li>
+                        <li><strong>참고문헌 목록:</strong> 본문에서 인용한 순서대로 일련번호를 매겨 정리</li>
+                        <li><strong>저자 표기:</strong> Last name(성) + 이름 Initial 표시
+                            <ul>
+                                <li>6인 이상인 경우: 6인까지만 기재하고 <code>et al.</code> 표시</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+
+                <h3>참고문헌 작성 양식</h3>
+
+                <h4>1️⃣ 학술지 논문</h4>
+                <div class="example-box">
+<code>저자명. 제목. 잡지명. 출판년도 ; 권(호) : 시작면-종료면. DOI.</code><br><br>
+<strong>예시:</strong><br>
+Smith CA, de Lacey S, Chapman M, Ratcliffe J, Norman RJ, Johnson NP, et al. Effect of acupuncture vs. sham acupuncture on live births among women undergoing in vitro fertilization: A randomized clinical trial. <em>JAMA</em>. 2018 ; 319(19): 1990-8. https://doi.org/10.1001/jama.2018.5336
+                </div>
+
+                <h4>2️⃣ 단행본 (책)</h4>
+                <div class="example-box">
+<code>저자명. 도서명. 판수. 발행지 : 출판사. 출판년도 : 시작면-종료면.</code><br><br>
+<strong>예시:</strong><br>
+Colson JH, Armour WJ. <em>Sports injuries and their treatment</em>. 2nd ed. London : Academic Press. 1986 : 155-6.
+                </div>
+
+                <h4>3️⃣ 단행본의 특정 장 (책의 한 챕터)</h4>
+                <div class="example-box">
+<code>저자명. 제목. In: 편집자명. 단행본명. 판수. 발행지 : 출판사. 출판년도 : 페이지.</code><br><br>
+<strong>예시:</strong><br>
+Foster DW. Diabetes mellitus. In: Fauci AS, Braunwald E, Isselbacher KJ, et al. <em>Harrison's textbook of medicine</em>. 14th ed. New York : McGraw-Hill. 1998 : 2060-81.
+                </div>
+
+                <h4>4️⃣ 온라인 자료</h4>
+                <div class="example-box">
+<code>저자명. 제목. 웹사이트명 [online] 발행년도 [인용일]. Available from: URL</code><br><br>
+<strong>예시:</strong><br>
+Morse SS. Factors in the emergence of infectious diseases. <em>Emerg Infect Dis</em> [online] 1995 Jan-Mar [cited 1996 Jun 5]. Available from: https://www.cdc.gov/eid/
+                </div>
+
+                <div class="box box-info">
+                    <strong>💡 팁:</strong> 잡지 약자는 PubMed 검색 결과를 따를 것
+                </div>
+            </section>
+
+            <!-- 5. AI 활용 필수 주의사항 -->
+            <section id="section5">
+                <h2><span class="emoji">🚨</span>AI 활용 시 필수 주의사항</h2>
+
+                <div class="box box-danger">
+                    <h3>❌ AI 활용이 금지되는 경우</h3>
+
+                    <h4>1. 본인의 원본 작성이 필요한 경우</h4>
+                    <ul>
+                        <li><span class="badge badge-danger">❌</span> AI에 전체 내용 작성을 맡기기</li>
+                        <li><span class="badge badge-danger">❌</span> AI 생성 결과물을 그대로 제출하기</li>
+                        <li><span class="badge badge-success">✅</span> 학습 과정을 거친 후 자신의 생각을 정리하여 작성</li>
+                    </ul>
+
+                    <h4>2. 출처 표시 없이 AI를 활용하는 경우</h4>
+                    <ul>
+                        <li><span class="badge badge-danger">❌</span> AI 활용 사실 미기재</li>
+                        <li><span class="badge badge-danger">❌</span> AI의 도움을 받았으나 명시하지 않기</li>
+                        <li><span class="badge badge-success">✅</span> 모든 AI 활용 내역을 명확하게 기재</li>
+                    </ul>
+
+                    <h4>3. 학술 부정행위에 해당하는 경우</h4>
+                    <ul>
+                        <li><span class="badge badge-danger">❌</span> 타인의 학습일지를 AI로 번역하거나 변형 후 제출</li>
+                        <li><span class="badge badge-danger">❌</span> 다른 학생 자료를 AI로 정제하여 제출</li>
+                        <li><span class="badge badge-danger">❌</span> 무단으로 타인의 아이디어를 AI로 표현만 바꿔 제출</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 6. AI 활용 허용 사항 -->
+            <section id="section6">
+                <h2><span class="emoji">✅</span>AI 활용이 허용되는 경우</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>활용 분야</th>
+                            <th>상세 내용</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>자료 검색 및 정리</strong></td>
+                            <td>경혈학 관련 논문, 자료의 핵심 내용 요약 정리 시 AI 활용 가능</td>
+                        </tr>
+                        <tr>
+                            <td><strong>문법 및 표현 교정</strong></td>
+                            <td>작성한 문장의 문법, 맞춤법, 문체 개선 (내용은 본인 작성)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>외국어 번역 지원</strong></td>
+                            <td>영어 논문 초록 번역, 의학 용어 설명 시 AI 활용 가능</td>
+                        </tr>
+                        <tr>
+                            <td><strong>참고문헌 형식 정리</strong></td>
+                            <td>참고문헌을 올바른 형식으로 정렬·정리</td>
+                        </tr>
+                        <tr>
+                            <td><strong>구조 및 체계 개선</strong></td>
+                            <td>작성한 내용을 더 체계적으로 재정렬 (내용 수정 아님)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 7. AI 활용 올바른 절차 -->
+            <section id="section7">
+                <h2><span class="emoji">📋</span>AI 활용 시 올바른 절차</h2>
+
+                <div class="box box-info">
+                    <h3 style="margin-top: 0;">절차 1: AI 활용 전 자신의 학습 우선</h3>
+                    <p style="margin-bottom: 0;">
+                        <strong>본인의 학습</strong> → <strong>자신의 생각 정리</strong> → <strong>필요한 부분만 AI 활용</strong> → <strong>최종 검토 및 수정</strong>
+                    </p>
+                </div>
+
+                <div class="box box-info">
+                    <h3>절차 2: 투명한 기록 유지</h3>
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li>어떤 AI를 사용했는지 명시 (ChatGPT, Claude 등)</li>
+                        <li>어떤 목적으로 사용했는지 명확하게 기재</li>
+                        <li>AI에 입력한 프롬프트 또는 질문 내용</li>
+                        <li>AI가 생성한 내용과 본인이 수정한 내용 구분</li>
+                    </ul>
+                </div>
+
+                <div class="box box-info">
+                    <h3>절차 3: 비판적 검토</h3>
+                    <ul style="margin: 0; padding-left: 30px;">
+                        <li>AI 생성 내용의 정확성 확인</li>
+                        <li>의료·학술 정보는 신뢰할 만한 출처로 재확인</li>
+                        <li>생성된 내용이 자신의 주장과 일치하는지 검토</li>
+                        <li>부정확하거나 부적절한 부분은 반드시 수정</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 8. AI 활용 기재 사항 -->
+            <section id="section8">
+                <h2><span class="emoji">📝</span>AI 활용 시 기재 사항</h2>
+
+                <h3>1. AI 활용 여부 선언</h3>
+                <p>학습일지 말미에 다음과 같이 기재:</p>
+                <div class="code-block">
+[AI 활용 현황]
+- ChatGPT 활용: 논문 초록 번역, 참고문헌 형식 정리
+- Claude 활용: 복잡한 의학 용어 설명
+- 기타 활용: 없음
+                </div>
+
+                <h3>2. 각 활용 내역 상세 기록</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>AI 활용 내역</th>
+                            <th>기재 방식</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>사용한 AI 도구</strong></td>
+                            <td>ChatGPT 4, Claude 3.5 등 구체적으로</td>
+                        </tr>
+                        <tr>
+                            <td><strong>활용 목적</strong></td>
+                            <td>논문 번역, 문법 교정, 자료 정리 등</td>
+                        </tr>
+                        <tr>
+                            <td><strong>입력 내용</strong></td>
+                            <td>어떤 질문/요청을 했는지</td>
+                        </tr>
+                        <tr>
+                            <td><strong>활용 결과</strong></td>
+                            <td>AI 생성 내용을 어떻게 수정·활용했는지</td>
+                        </tr>
+                        <tr>
+                            <td><strong>페이지/위치</strong></td>
+                            <td>학습일지 어느 부분에 적용했는지</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3. 출처 표시 예시</h3>
+                <div class="code-block">
+[AI 활용 공개]
+- p.4, 2번 항목: ChatGPT를 이용한 "오장육부의 경락 기능" 설명
+  번역 및 정리 → 본인이 추가 자료(논문 OO)와 비교 검토 후 수정
+
+- p.7, 참고문헌: Claude를 이용한 참고문헌 형식 일괄 정리
+  (APA 형식으로 통일)
+
+- 기타: 문장의 문법 및 표현 다듬기 (ChatGPT 문법 검사)
+                </div>
+            </section>
+
+            <!-- 9. 평가 기준 -->
+            <section id="section9">
+                <h2><span class="emoji">📊</span>평가 기준</h2>
+
+                <h3>기본 평가 기준</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>평가 등급</th>
+                            <th>기준</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #c8e6c9;">
+                            <td><strong>⭐ 매우 우수</strong></td>
+                            <td>우수 기준을 충족하고, 학생 개인의 성취도가 발전하는 단계<br><small>(교수자의 정성적 평가)</small></td>
+                        </tr>
+                        <tr style="background: #e8f8f5;">
+                            <td><strong>👍 우수</strong></td>
+                            <td>모든 기준 충족, 5단계 분석법 평가 (클로드 베르나르의 과학적 방법론) 적용 가능한 탐구학습, AI 활용 투명하게 기재</td>
+                        </tr>
+                        <tr style="background: #fff9c4;">
+                            <td><strong>😐 보통</strong></td>
+                            <td>일부 기준 미충족, 5단계 분석법 평가 (클로드 베르나르의 과학적 방법론) 적용에 부합하지 않는 탐구학습, AI 활용 불투명</td>
+                        </tr>
+                        <tr style="background: #ffcccc;">
+                            <td><strong>😞 미흡</strong></td>
+                            <td>기준 미달, 출처 미기재(허위 출처 포함), 무단 인용, AI 활용 미기재</td>
+                        </tr>
+                        <tr style="background: #ffb3ba;">
+                            <td><strong>❌ 미제출</strong></td>
+                            <td>학습일지를 기한 내에 제출하지 않은 경우 포함</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>타인의 학습일지 참고할 경우</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th>내용</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background: #eafaf1;">
+                            <td><strong>✅ 해야 할 일</strong></td>
+                            <td>반드시 출처 표시 (최초 작성자 학번, 성명 등)</td>
+                        </tr>
+                        <tr style="background: #fadbd8;">
+                            <td><strong>❌ 하면 안 되는 일</strong></td>
+                            <td>출처 표시 없이 인용 시 '미흡' 평가</td>
+                        </tr>
+                        <tr style="background: #fef5e7;">
+                            <td><strong>📊 평가 상한선</strong></td>
+                            <td>타인 학습일지 활용 시 '우수'가 최고 등급</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- 10. 체크리스트 -->
+            <section id="section10">
+                <h2><span class="emoji">📌</span>제출 전 체크리스트</h2>
+
+                <ul class="checklist">
+                    <li><input type="checkbox"> 파일명이 <code>주차_주제_학번_이름.pdf</code> 형식인가?</li>
+                    <li><input type="checkbox"> 모든 참고 자료의 출처를 명시했는가?</li>
+                    <li><input type="checkbox"> 참고문헌이 올바른 형식으로 기재되었는가?</li>
+                    <li><input type="checkbox"> 4가지 섹션(수업 요약, 자가 학습, 요약 및 토론, 출처 및 참고문헌)을 모두 포함했는가?</li>
+                    <li><input type="checkbox"> AI 활용 여부를 기재했는가?</li>
+                </ul>
+
+                <h3>🤖 AI 활용 관련 체크리스트 (⭐ 필수)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <strong>학습 우선성</strong>: 본인이 먼저 충분히 학습했는가?</li>
+                    <li><input type="checkbox"> <strong>역할 명확화</strong>: AI는 보조 수단으로만 사용했는가?</li>
+                    <li><input type="checkbox"> <strong>투명한 기재</strong>: 모든 AI 활용 내역을 기재했는가?</li>
+                    <li><input type="checkbox"> <strong>비판적 검토</strong>: AI 생성 내용을 검증했는가?</li>
+                    <li><input type="checkbox"> <strong>정확성 확인</strong>: 특히 의료·학술 정보는 재확인했는가?</li>
+                    <li><input type="checkbox"> <strong>출처 표시</strong>: 각 AI 활용 부분의 위치를 명확히 했는가?</li>
+                    <li><input type="checkbox"> <strong>창작성 보존</strong>: 본인의 생각과 해석이 포함되어 있는가?</li>
+                    <li><input type="checkbox"> <strong>형식 준수</strong>: "AI 활용 현황" 섹션을 별도로 기재했는가?</li>
+                </ul>
+            </section>
+
+            <!-- 11. FAQ -->
+            <section id="section11">
+                <h2><span class="emoji">💬</span>자주 묻는 질문 (FAQ)</h2>
+
+                <div class="faq-item">
+                    <strong>Q1. AI를 조금만 사용하면 안 적어도 되나?</strong>
+                    <p>A. 아니요. AI 활용 여부는 분량이 아니라 투명성입니다. 1문장이라도 AI를 사용했다면 반드시 기재하세요.</p>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Q2. 여러 AI를 사용했으면 다 써야 하나?</strong>
+                    <p>A. 네. 사용한 모든 AI와 각각의 활용 목적을 기재해야 합니다. 이것이 투명성과 신뢰도를 높입니다.</p>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Q3. AI에서 나온 내용이 내 의견과 같으면 출처 표시 안 해도 되나?</strong>
+                    <p>A. 아니요. 의견이 같더라도 AI를 활용했다면 반드시 기재합니다. 이것이 학술적 정직성입니다.</p>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Q4. "맞춤법 검사"도 AI 활용으로 봐야 하나?</strong>
+                    <p>A. 네. 정확히 기재하세요. 예: "ChatGPT 맞춤법 검사"</p>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Q5. AI가 만든 이미지도 출처를 써야 하나?</strong>
+                    <p>A. 네. 다른 이미지처럼 "출처: DALL-E" 등으로 표시하고, AI 활용 현황에서도 기재하세요.</p>
+                </div>
+
+                <div class="faq-item">
+                    <strong>Q6. 선배 학습일지를 참고해도 되나?</strong>
+                    <p>A. 참고는 괜찮습니다. 하지만 그 내용을 그대로 사용하고 AI로 표현만 바꾸면 안 됩니다. 본인이 새롭게 이해하고 작성하세요.</p>
+                </div>
+            </section>
+
+            <!-- 핵심 메시지 -->
+            <div class="box box-info" style="margin-top: 60px;">
+                <h2 style="margin-top: 0; border: none; padding: 0; color: var(--info);">💡 핵심 메시지</h2>
+                <p style="font-size: 1.1em; line-height: 2; margin: 20px 0 0 0;">
+                    <strong>"AI를 활용하되, 투명하고 윤리적으로"</strong><br><br>
+                    이것이 이 안내의 핵심입니다.<br>
+                    AI는 당신의 학습을 돕는 도구일 뿐,<br>
+                    <strong>최종 책임은 여러분에게 있습니다.</strong>
+                </p>
+            </div>
+
+            <!-- 부정행위 경고 -->
+            <div class="box box-danger" style="margin-top: 30px;">
+                <h3>⚠️ 부정행위의 결과</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>위반 사항</th>
+                            <th>평가 결과</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>AI 활용 미기재</td>
+                            <td><strong style="color: var(--danger);">미흡</strong></td>
+                        </tr>
+                        <tr>
+                            <td>AI 생성 결과물을 본인 작품으로 거짓 표시</td>
+                            <td><strong style="color: var(--danger);">미흡</strong> + 부정행위 경고</td>
+                        </tr>
+                        <tr>
+                            <td>타인 자료를 AI로 변형 후 제출</td>
+                            <td><strong style="color: var(--danger);">미흡</strong> + 학사 징계 가능</td>
+                        </tr>
+                        <tr>
+                            <td>의료 오정보를 검증 없이 사용</td>
+                            <td><strong style="color: var(--danger);">미흡</strong> + 학습 효과 없음</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 20px;">학습일지 작성에서 확인된 학술 부정행위는 대학의 학사규정에 따라 처리될 수 있습니다.</p>
+            </div>
+        </div>
+
+        <!-- 푸터 -->
+        <div class="footer">
+            <h3>📖 참고</h3>
+            <p>본 안내는 <strong>국가연구개발 AI 연구윤리 가이드(2026.9.)</strong>를 참고하여 작성되었습니다.</p>
+            <p style="margin-top: 25px; font-weight: 600;">문의사항이 있으면 수업 시간에 질문해주세요! 😊</p>
+            <p>경혈학2 | 원광대학교 한의과대학</p>
+            <p style="margin-top: 20px; font-size: 0.85em; color: #999;">
+                Last Updated: 2026-09-22 | Version 1.0
+            </p>
+        </div>
+    </div>
+
+    <!-- 상단 이동 버튼 -->
+    <div class="back-to-top" id="backToTop">↑</div>
+
+    <script>
+        // 상단 이동 버튼 기능
+        const backToTopButton = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 목차 링크 부드러운 스크롤
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 프린트 시 도움말
+        window.addEventListener('beforeprint', () => {
+            console.log('페이지를 프린트합니다. A4 용지에 최적화되어 있습니다.');
+        });
+    </script>
+</body>
+</html>
