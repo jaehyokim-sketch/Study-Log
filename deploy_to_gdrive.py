@@ -232,3 +232,4 @@ if __name__ == "__main__":
     parser.add_argument("--prune", action="store_true", help="Remove files/dirs from Google Drive that do not exist locally")
     args = parser.parse_args()
     sync_to_gdrive(dry_run=args.dry_run, prune=args.prune)
+
