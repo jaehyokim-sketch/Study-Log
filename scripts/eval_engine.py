@@ -68,6 +68,122 @@ ACUPOINTS = {
 }
 
 
+
+# ════════════════════════════════════════════════════════════════════
+# 0-1. 상용경혈(필수·우선순위) 데이터베이스 로더 및 매칭 모듈
+# ════════════════════════════════════════════════════════════════════
+MERIDIAN_CODE_MAP = {
+    '독맥': 'GV', 'GV': 'GV', '독': 'GV',
+    '임맥': 'CV', 'CV': 'CV', '임': 'CV',
+    '수태음폐경': 'LU', '폐경': 'LU', 'LU': 'LU',
+    '수양명대장경': 'LI', '대장경': 'LI', 'LI': 'LI',
+    '족양명위경': 'ST', '위경': 'ST', 'ST': 'ST',
+    '족태음비경': 'SP', '비경': 'SP', 'SP': 'SP',
+    '수소음심경': 'HT', '심경': 'HT', 'HT': 'HT',
+    '수태양소장경': 'SI', '소장경': 'SI', 'SI': 'SI',
+    '족태양방광경': 'BL', '방광경': 'BL', 'BL': 'BL',
+    '족소음신경': 'KI', '신경': 'KI', 'KI': 'KI',
+    '수궐음심포경': 'PC', '심포경': 'PC', 'PC': 'PC',
+    '수소양삼초경': 'TE', '삼초경': 'TE', 'TE': 'TE',
+    '족소양담경': 'GB', '담경': 'GB', 'GB': 'GB',
+    '족궐음간경': 'LR', '간경': 'LR', 'LR': 'LR',
+}
+
+def load_priority_acupoints_db():
+    """
+    references/경혈학_상용경혈_필수_우선순위_표기본.xlsx 에서
+    경맥별 필수 및 우선순위 경혈 목록을 파싱하여 딕셔너리로 구축
+    """
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    excel_candidates = [
+        os.path.join(base_dir, 'references', '경혈학_상용경혈_필수_우선순위_표기본.xlsx'),
+        os.path.join(r'G:\내 드라이브\강의_평가 및 학습활동 자료\학습일지 평가', '경혈학_상용경혈_필수_우선순위_표기본.xlsx'),
+    ]
+    
+    excel_path = None
+    for p in excel_candidates:
+        if os.path.exists(p):
+            excel_path = p
+            break
+            
+    db = {}
+    if not excel_path or 'openpyxl' not in sys.modules:
+        # Fallback 기본 독맥(GV) 상용혈
+        db['GV'] = {
+            'names': ['장강', '요양관', '명문', '중추', '근축', '지양', '영대', '신주', '도도', '대추', '아문', '풍부', '뇌호', '백회', '전정', '신회', '상성', '신정', '수구'],
+            'total': 19
+        }
+        return db
+
+    try:
+        wb = openpyxl.load_workbook(excel_path, data_only=True)
+        ws = wb['시트1(361정경혈_표기완료)'] if '시트1(361정경혈_표기완료)' in wb.sheetnames else wb.active
+        for r in range(2, ws.max_row + 1):
+            code_val = ws.cell(r, 2).value
+            name_val = str(ws.cell(r, 3).value or '').strip()
+            is_req = ws.cell(r, 5).value == '필수'
+            is_pri = ws.cell(r, 6).value == '우선순위'
+            
+            if not code_val or not name_val:
+                continue
+            m_code = ''.join([c for c in str(code_val) if c.isalpha()]).upper()
+            if m_code not in db:
+                db[m_code] = {'names': [], 'codes': [], 'details': []}
+                
+            if is_req or is_pri:
+                db[m_code]['names'].append(name_val)
+                db[m_code]['codes'].append(str(code_val).strip())
+                db[m_code]['details'].append({'code': str(code_val).strip(), 'name': name_val, 'req': is_req, 'pri': is_pri})
+                
+        for m_code in db:
+            db[m_code]['total'] = len(db[m_code]['names'])
+    except Exception as e:
+        print(f"Warning: Failed to load priority acupoints from excel: {e}")
+        db['GV'] = {'names': ['장강', '요양관', '명문', '대추', '아문', '풍부', '백회', '신정', '수구'], 'total': 9}
+    return db
+
+PRIORITY_ACUPOINTS_DB = load_priority_acupoints_db()
+
+def calculate_acupoint_coverage(clean_text: str, topic: str):
+    """
+    학생 학습일지 본문에서 해당 경맥의 필수/우선순위 경혈 포함율(Coverage Rate) 계산 및 등급 판정
+    90% 이상: 매우우수 / 80% 이상: 우수 / 70% 이상: 보통 / 70% 미만: 미흡
+    """
+    # 토픽에서 경맥 코드 결정
+    m_code = 'GV'
+    for k, v in MERIDIAN_CODE_MAP.items():
+        if k in topic:
+            m_code = v
+            break
+            
+    target_info = PRIORITY_ACUPOINTS_DB.get(m_code, PRIORITY_ACUPOINTS_DB.get('GV', {'names': [], 'total': 0}))
+    target_names = target_info.get('names', [])
+    total_target = len(target_names)
+    
+    if total_target == 0:
+        return 100.0, '우수', [], [], 0
+        
+    found = []
+    missing = []
+    for name in target_names:
+        if name in clean_text:
+            found.append(name)
+        else:
+            missing.append(name)
+            
+    rate = (len(found) / total_target) * 100.0
+    if rate >= 90.0:
+        grade = '매우우수'
+    elif rate >= 80.0:
+        grade = '우수'
+    elif rate >= 70.0:
+        grade = '보통'
+    else:
+        grade = '미흡'
+        
+    return rate, grade, found, missing, total_target
+
+
 def clean_title(s: str) -> str:
     if not s:
         return ""
@@ -280,9 +396,10 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             student_question = m_q.group(1).strip() if m_q else f"{topic} 경혈 임상 적용 기전 의문"
             student_question = re.sub(r'[\s\x00-\x1f\x7f-\x9f]+', ' ', student_question)[:100]
 
-        # 본문에서 다룬 주요 혈위 탐지
-        found_acupoints = [name for k, name in ACUPOINTS.items() if k in clean_text]
-        focal_points = ", ".join(found_acupoints[:2]) if found_acupoints else "대추(GV14), 백회(GV20)"
+        # 본문에서 다룬 주요 혈위 탐지 및 상용경혈(필수·우선순위) 학습 충실도 분석
+        cov_rate, cov_grade, cov_found, cov_missing, cov_total = calculate_acupoint_coverage(clean_text, topic)
+        found_acupoints = cov_found if cov_found else [name for k, name in ACUPOINTS.items() if k in clean_text]
+        focal_points = ", ".join(found_acupoints[:3]) if found_acupoints else "대추(GV14), 백회(GV20)"
 
         # 직전 회차 이력 조회
         h4 = hist_4.get(sid, {})
@@ -302,9 +419,9 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         elif not (has_s1 and has_s2 and has_s3):
             defect = "D8(필수 섹션 결여)"
 
-        # 요건 판정 (R1~R6) - 결함 2 해결: 5단계 미완결 시 R3='△ (미완결)'
+        # 요건 판정 (R1~R6) - R2: 상용경혈(필수·우선순위) 충실도(80%↑ 우수) 및 분량 반영
         r1 = "○" if (has_s1 and has_s2 and has_s3 and has_s4) else "×"
-        r2 = "○" if pages >= 10 else ("△" if pages >= 5 else "×")
+        r2 = "○" if (pages >= 10 and cov_rate >= 80.0) else ("△" if (pages >= 5 and cov_rate >= 70.0) else "×")
         r3 = "○" if cb_count == 5 else "△"  # 엄격 적용: 5/5만 ○, 4/5 이하는 △
         r4 = "○" if has_s3 and pages >= 8 else "△"
         r5 = "○" if (has_s4 and looks_like_valid_title(paper_title)) else "△"
@@ -314,6 +431,8 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         indicators = []
         if cb_count == 5:
             indicators.append("5단계 분석 완결")
+        if cov_rate >= 90.0:
+            indicators.append(f"상용경혈 충실도 매우우수({cov_rate:.0f}%)")
         if any(k in clean_text for k in ['왜', '기전', '의문', '가설', '상관성', '신경생리']):
             indicators.append("학술적 심층 질문")
         if any(k in clean_text for k in ['한계', '제한점', '비판', '편향', '대조군미비', '오류']):
