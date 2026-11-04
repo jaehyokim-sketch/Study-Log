@@ -58,7 +58,7 @@ C:\workspace\학습일지 평가\ (Repository: Study-Log)
 │
 └── scripts\
     ├── eval_engine.py        # 핵심 평가 엔진 및 엑셀 리포트 자동 생성기
-    └── rename_logs.py        # 파일명 일괄 표준화 (회차_이름_학번_경맥명.pdf)
+    └── rename_logs.py        # 파일명 일괄 표준화 (회차_이름_학번_경맥명 또는 학습주제.pdf)
 ```
 
 ---
