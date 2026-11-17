@@ -257,6 +257,72 @@ def extract_paper_title(full_text: str, default_topic: str = "독맥") -> str:
 
     return f"{default_topic} 관련 학술 논문 및 중추/척수 신경 기전 연구"
 
+def extract_student_question(full_text: str, default_topic: str = "경혈학") -> str:
+    """
+    학습일지 양식 '3.3. 교수자에게 드리는 학술 질문 (Question to Professor)'을
+    근거로 학생이 작성한 실제 질문을 정밀하게 추출한다.
+    """
+    if not full_text:
+        return f"{default_topic} 경혈 임상 적용 기전 의문"
+
+    # 1. 양식 표준 소제목: 3.3. 교수자에게 드리는 학술 질문 (Question to Professor) 탐색
+    sec_pattern = re.compile(
+        r'(?:(?:3\.3|3-3)[\.\s]*교수자에게\s*드리는\s*학술\s*질문(?:\s*[\(\[]\s*question\s*to\s*professor\s*[\)\]])?'
+        r'|교수자에게\s*드리는\s*학술\s*질문'
+        r'|(?:3\.3|3-3)[\.\s]*학술\s*질문'
+        r'|question\s*to\s*professor'
+        r'|교수자(?:에게\s*드리는)?\s*질문)',
+        re.IGNORECASE
+    )
+
+    m = sec_pattern.search(full_text)
+    if m:
+        start_idx = m.end()
+        # 다음 섹션 (4. 참고문헌/출처 또는 AI 활용 등) 전까지 슬라이싱
+        next_sec = re.search(r'\n\s*(?:4[\.\s]|참고\s*문헌|출처\s*및|references|\[?ai\s*활용)', full_text[start_idx:], re.IGNORECASE)
+        end_idx = start_idx + next_sec.start() if next_sec else start_idx + 1500
+        sec_text = full_text[start_idx:end_idx].strip()
+
+        # 템플릿 기본 작성요령/가이드라인 문구 필터링
+        lines = sec_text.split('\n')
+        content_lines = []
+        for line in lines:
+            line_str = line.strip()
+            if not line_str:
+                continue
+            if any(k in line_str for k in [
+                '※', '작성요령', '작성 요령', '안내:', '질문 예시', '예시:',
+                '질문을 1~2개 기술', '수업이나 탐구 과정', '수업 내용이나 논문',
+                'question to professor', '소제목', '배점'
+            ]):
+                continue
+            content_lines.append(line_str)
+
+        if content_lines:
+            extracted = " ".join(content_lines)
+            clean_q = re.sub(r'\s+', ' ', extracted).strip()
+            if len(clean_q) > 150:
+                q_end = clean_q.find('?')
+                if 20 <= q_end <= 150:
+                    clean_q = clean_q[:q_end+1].strip()
+                else:
+                    clean_q = clean_q[:140] + "..."
+            if len(clean_q) >= 10:
+                return clean_q
+
+    # 2. 폴백: 기존 일반 질문 라벨 또는 물음표 문장
+    m_q = re.search(r'(?:학술\s*)?질문\s*[:：]\s*([^\n]+(?:\n[^\n]+)?)', full_text)
+    if m_q:
+        q_text = m_q.group(1).strip()
+        q_text = re.sub(r'\s+', ' ', q_text)[:120]
+        if len(q_text) >= 10:
+            return q_text
+
+    m_q2 = re.search(r'\?\s*\n([가-힣\s]{10,80}\?)', full_text)
+    if m_q2:
+        return re.sub(r'\s+', ' ', m_q2.group(1).strip())[:100]
+
+    return f"{default_topic} 경혈 임상 적용 기전 의문"
 
 def load_history(prev4_path, prev5_path):
     """직전 4차 및 5차 평가 이력 로드"""
@@ -694,7 +760,7 @@ def write_excel_report(records, output_path):
     headers2 = [
         "연번", "학번", "성명", "6차 제안 등급", "선정 탐구 논문 / 고전 문헌",
         "결격사유 (D1~D8)", "R1 (구조)", "R2 (분량)", "R3 (5단계 분석)", "R4 (질문/성찰)", "R5 (출처/서지)", "R6 (AI 표기)",
-        "학생 임상/학술 질문", "질문에 대한 교수자 학술 피드백 답변"
+        "학생 임상/학술 질문 (양식 3.3 기준)", "질문에 대한 교수자 학술 피드백 답변"
     ]
 
     for col_idx, h in enumerate(headers2, 1):
