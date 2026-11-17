@@ -343,7 +343,8 @@ def check_hypothetico_deductive_paper(paper_title: str, full_text: str = "") -> 
     # 1. 비실증 / 문헌고찰 / 고전원전 / 종설 키워드 필터링
     lit_keywords = [
         '고전 원전', '갑을경', '표유부', '비교 연구', '도교', '고전문헌', '문헌고찰',
-        '문헌 연구', '종설', 'review', '체계적 문헌고찰', '역사적', '문헌적', '고서', '변증론치'
+        '문헌 연구', '종설', 'review', '체계적 문헌고찰', '역사적', '문헌적', '고서', '변증론치',
+        '변천사', '변천', '고찰', '고증', '문헌사', '기부론', '산경'
     ]
     for kw in lit_keywords:
         if kw in title_lower:
@@ -351,10 +352,11 @@ def check_hypothetico_deductive_paper(paper_title: str, full_text: str = "") -> 
 
     # 2. 가설연역적 실증 논문 키워드 매칭 (통제 처치 및 정량 측정 연구)
     emp_keywords = [
-        '효과', '기전', '영향', '전침', '자침', '자극', 'acupuncture', 'electroacupuncture',
-        'spinal', 'brain', '실험', '임상', '대조', '무작위', 'rct', 'rat', '마우스', '환자',
-        '신경', '세포', '통증', '염증', '보호', '발현', '억제', '조절', '기능', 'gv', '대추', '백회',
-        'fever', '체온', '사혈', '허혈', '뇌경색', '중추'
+        '효과', '기전', '영향', '전침', '자침', '자극', '뜸', 'acupuncture', 'electroacupuncture',
+        'moxibustion', 'needle', 'pain', 'trial', 'treatment', 'effects', 'effect', 'efficacy',
+        'stimulation', 'breech', 'spinal', 'brain', '실험', '임상', '대조', '무작위', 'rct', 'rat',
+        '마우스', '환자', '신경', '세포', '통증', '염증', '보호', '발현', '억제', '조절', '기능',
+        'gv', 'bl', '대추', '백회', 'fever', '체온', '사혈', '허혈', '뇌경색', '중추'
     ]
     if any(kw in title_lower for kw in emp_keywords):
         return True, "가설연역적 실증 논문 부합"

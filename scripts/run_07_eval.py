@@ -98,9 +98,9 @@ QNA_DB = {
         'ans': '신수(BL23)는 요추 신경근 뒤가지(L2 dorsal ramus)와 척추세움근/뭇갈래근에 위치하여 국소 근육의 혈류 증가와 연축 완화를 유도하며, 위중(BL40)은 하지의 궁둥신경-정강신경 분지부에 위치합니다. 요배위중구(腰背委中求)의 배오는 근위부 분절 감압과 원위부 구심 신경 자극을 결합하여 척수 분절성 억제와 하행성 통증 억제계(DNIC)를 동시 활성화하여 만성 신경근병증성 방사통을 효과적으로 제어합니다.'
     },
     '20241387': {
-        'paper': '족태양방광경 관련 학술 논문 및 신경생리 기전 연구',
-        'q': '족태양방광경 혈위 임상 기전 질문',
-        'ans': '제출 파일이 0바이트로 손상되어 학술 질문을 확인할 수 없었습니다. 정명, 찬죽, 배수혈, 위중 등 방광경 핵심 혈위에 대한 연구 논문을 분석하여 재제출 바랍니다.'
+        'paper': '비급성 요통에 대한 위수혈(BL21) 자락관법의 효과: 예비 무작위 대조군 시험(RCT) 및 동작침법 임상 연구',
+        'q': '위수혈(BL21) 자락관법 및 원위 취혈 동작침법(행간·곡지·풍부) 시술 시, 흉요추이행부 T12 척수신경 후지 감각분지 감압 및 하행성 통증 억제 기전과 대조군(비경혈) 대비 경혈 특이성의 신경생리학적 분기점은 무엇인가?',
+        'ans': '위수(BL21) 자락관법은 T12 후지 내측지의 기계적 감압과 국소 혈류 개선(산화질소 분비)을 유도하며, 예비 RCT에서 비경혈 대조군 대비 유의차가 없었던 점은 대조점 역시 광배근·흉요근막 긴장을 공유하기 때문으로 해석할 수 있습니다. 한편 원위 취혈 동작침법은 고유수용성 감각 입력과 하행성 통증 억제 경로(DNIC)를 활성화하여 조기 가동성 회복을 이끌어내는 신경-생역학적 통합 기전입니다.'
     },
     '20241448': {
         'paper': '곤륜(BL60)의 전침 자극이 뇌파(EEG)에 미치는 영향 (Korean J Acupunct)',
@@ -208,7 +208,7 @@ QNA_DB = {
         'ans': '대저(BL11)와 풍문(BL12)은 T1~T2 척추 신경 뒤가지와 상흉추 교감신경절 상방에 위치합니다. 이 부위의 사자(0.5~0.8촌)는 성상신경절(Stellate ganglion) 반사를 매개로 뇌혈관 연축을 완화합니다. 늑간을 향해 직자(1.0촌 이상)할 경우 벽측 흉막을 뚫어 외상성 기흉을 유발할 위험이 매우 높으므로, 척추 방향(내측)으로 45도 기울여 늑골면에 닿도록 사자하는 것이 필수 안전 수칙입니다.'
     },
     '20241404': {
-        'paper': 'Acupoint specificity of Bladder meridian for autonomic modulation (2021)',
+        'paper': 'Electroacupuncture at points Baliao and Huiyang (BL35) for post-stroke detrusor overactivity (Neural Regen Res 2013)',
         'q': '족태양방광경 혈위의 체표 주행과 내부 장부 연계(속방광 낙신)의 현대 신경해부학적 매핑 기전은 무엇인가?',
         'ans': '방광경의 속방광 낙신(屬膀胱 絡腎) 관계는 흉요추 및 천추 자율신경계 분절 구조와 일치합니다. T10~L2 분절은 신장과 상부 요로를, S2~S4 분절은 방광과 골반 장기를 지배합니다. 등부위 배수혈과 하지의 방광경 경혈들은 이 척수 분절과 교감/부교감 신경절을 공유함으로써 체표 자극이 해당 척수 분절을 통해 내장 기능 조절로 전환되는 체성-내장 반사의 해부학적 고리를 형성합니다.'
     },
@@ -296,19 +296,30 @@ QNA_DB = {
 
 print(f"Loaded customized QnA DB for all 48 students.")
 
-# 4. 48명 전수 채점 루브릭 판정 루프
+# 4. 48명 전수 채점 루브릭 판정 루프 (중복 제출 파일 정리 및 학번 기준 48명 고유화)
 files = sorted([f for f in os.listdir(target_dir) if f.endswith('.pdf')])
-evaluated_records = []
-
-for idx, f in enumerate(files, 1):
-    path = os.path.join(target_dir, f)
+students = {}
+for f in files:
     m = re.match(r'07차_([^_]+)_(\d{8})_족태양방광경\.pdf', f)
     if m:
         name, sid = m.groups()
+        students[sid] = {'name': name, 'file': f}
     else:
-        sid = re.findall(r'20\d{6,7}', f)[0]
-        name = f.split('_')[1]
-        
+        sids = re.findall(r'20\d{6,7}', f)
+        if sids:
+            sid = sids[0]
+            if sid not in students:
+                name = f.split('_')[1] if '_' in f else '학생'
+                students[sid] = {'name': name, 'file': f}
+
+# 학생 성명 가나다순 정렬 (총 48명 전수)
+sorted_students = sorted(students.items(), key=lambda x: x[1]['name'])
+evaluated_records = []
+
+for idx, (sid, sinfo) in enumerate(sorted_students, 1):
+    name = sinfo['name']
+    f = sinfo['file']
+    path = os.path.join(target_dir, f)
     doc = fitz.open(path)
     pages = len(doc)
     
@@ -317,7 +328,7 @@ for idx, f in enumerate(files, 1):
     
     # Font shift & Special student check
     is_font_shift = (sid in ['20231308', '20241390', '20241405'])
-    is_corrupted = (sid == '20241387')  # 김수연 0p
+    is_corrupted = (pages == 0)
     
     # 4대 섹션
     has_s1 = any(k in clean for k in ['기본정보', '수업요약', '수업내용', '본초강목', '개요', '주요경혈', '실습', '족태양방광경', '방광경'])
@@ -327,6 +338,10 @@ for idx, f in enumerate(files, 1):
     has_ai = any(k in clean for k in ['ai활용', '인공지능', 'ai표기', 'chatgpt', 'claude', 'gemini', '생성형ai', '인공지능활용', 'ai미사용', '생성형', '활용없음', '활용(x)'])
     has_ai_detail = any(k in clean for k in ['gpt-4', 'gpt-3', '4o', '프롬프트', '질의문', 'prompt', '버전', 'version', 'claude-3', 'gemini-1', '모델:', '버전:'])
     
+    # 요약 및 토론 본인 직접 작성 표기 및 독자적 고찰 입증
+    has_s3_self_declared = any(k in clean for k in ['직접작성', '본인작성', '본인이직접', '학생본인', '직접사유', 'ai생성이아닌', 'ai미사용', 'ai도움없이', '생성형ai미사용', '본인확인'])
+    has_deep_insight = any(k in clean for k in ['비교표', '대조표', '분절지배', '표 1', '유기적', '기전분기', '임상적의의', 'cvi', 'breech', 'oct', '정맥'])
+
     # 5단계
     has_q = any(k in clean for k in ['질문', '가설', '의문', 'question', '문제의식', '임상질문'])
     has_m = any(k in clean for k in ['조작', 'manipulation', '처치', '실험군', '대조군', '중재'])
@@ -374,6 +389,28 @@ for idx, f in enumerate(files, 1):
     student_question = qna['q']
     professor_answer = qna['ans']
     
+    # 클로드 베르나르 5단계 가설연역적(Hypothetico-deductive) 실증 논문 적합성 검증
+    is_hd, hypo_reason = eval_engine.check_hypothetico_deductive_paper(paper_title, txt)
+
+    # 자가 탐구학습(R3) 평가: 가설연역적 실증 논문 기준 충족 시 '매우우수', 미충족 시 최대 '우수' 상한
+    if cb_count == 5 and is_hd:
+        s2_grade = "매우우수"
+    elif cb_count >= 4:
+        s2_grade = "우수"
+    else:
+        s2_grade = f"보통 ({cb_count}/5)"
+
+    # 형식·출처 체크리스트(§4) 분석 (R5 판정 반영 원칙: 등급 강등 없이 피드백 권고로 기술)
+    format_flaws = []
+    if not re.match(r'^\d{1,2}차_[가-힣]{2,4}_\d{6,10}_.+\.pdf$', f):
+        format_flaws.append("표준 파일명 규격([회차]_[이름]_[학번]_[주제].pdf)")
+    if not bool(re.search(r'\[\d+\]', txt)):
+        format_flaws.append("본문 인용문 끝 [1] 어깨번호 표기")
+    has_images = bool(re.search(r'(그림\s*\d|사진\s*\d|fig(?:ure)?\.?\s*\d)', txt, re.I))
+    has_img_src = bool(re.search(r'(그림\s*출처|사진\s*출처|이미지\s*출처|source\s*:)', txt, re.I))
+    if has_images and not has_img_src:
+        format_flaws.append("삽입 이미지별 출처 명시")
+
     # 직전 이력
     h6 = hist_6.get(sid, {})
     h5 = hist_5.get(sid, {})
@@ -394,7 +431,7 @@ for idx, f in enumerate(files, 1):
     elif not (has_s1 and has_s2 and has_s3):
         defect = "D8(필수 섹션 결여)"
         
-    # 요건 판정 (R1~R6)
+    # 요건 판정 (R1~R6) - R5: 오직 "본문에 부합하는 참고문헌 양식 4종 준수" 여부만 반영
     r1 = "○" if (has_s1 and has_s2 and has_s3 and has_s4) else "×"
     r2 = "○" if (pages >= 10 and cov_rate >= 80.0) else ("△" if (pages >= 5 and cov_rate >= 70.0) else "×")
     r3 = "○" if cb_count == 5 else "△"
@@ -404,7 +441,9 @@ for idx, f in enumerate(files, 1):
     
     # 매우우수 지표 판정
     indicators = []
-    if cb_count == 5:
+    if cb_count == 5 and is_hd:
+        indicators.append("가설연역 실증 5단계 완결")
+    elif cb_count == 5:
         indicators.append("5단계 분석 완결")
     if cov_rate >= 90.0:
         indicators.append(f"상용경혈 충실도 매우우수({cov_rate:.0f}%)")
@@ -412,10 +451,12 @@ for idx, f in enumerate(files, 1):
         indicators.append("학술적 심층 질문")
     if pages >= 20:
         indicators.append("방대한 심층 고찰(20쪽↑)")
-    if any(k in clean for k in ['비교표', '대조표', '분절지배', '표 1', '유기적', '정맥', 'cvi', 'breech', 'oct']):
+    if has_deep_insight:
         indicators.append("유기적 비교표/통합")
     if has_s4 and has_ai:
         indicators.append("참고문헌/AI 표기 투명성")
+    if has_s3_self_declared:
+        indicators.append("토론 본인직접작성 표기")
         
     indicator_count = len(indicators)
     indicator_str = f"{indicator_count}개 충족 ({', '.join(indicators[:2])})" if indicators else "해당 없음"
@@ -437,7 +478,7 @@ for idx, f in enumerate(files, 1):
     else:
         fb_reflection = "보통 (전반적 학습 성실도 유지)"
         
-    # 등급 결정
+    # 등급 결정 (Gate 0~4 체계)
     if defect != "없음":
         if defect == "D4(AI 활용 미기재)":
             grade = "잠정: 우수 (AI 활용 여부 확인 필요)"
@@ -445,27 +486,32 @@ for idx, f in enumerate(files, 1):
             grade = "미흡"
     elif cb_count == 5:
         if r1 == "○" and r2 == "○" and r3 == "○" and r4 == "○" and r5 == "○" and r6 == "○":
-            if indicator_count >= 4 and ("우수" in fb_reflection or pages >= 15):
+            # Gate 3 3대 필수 관문 통과 여부:
+            # 1. 요약 및 토론 본인 직접 작성 표기 및 독자적 고찰 입증
+            # 2. 가설연역적 실증 논문 적합성
+            # 3. 방광경 상용경혈 충실도 90% 이상 (and pages >= 12)
+            pass_g3_1 = (has_s3_self_declared or (has_deep_insight and pages >= 15))
+            pass_g3_2 = is_hd
+            pass_g3_3 = (cov_rate >= 90.0)
+
+            if pass_g3_1 and pass_g3_2 and pass_g3_3 and pages >= 12:
                 grade = "매우 우수 후보"
             else:
+                # Gate 4: 최고 우수 상한 적용
                 grade = "우수"
         else:
-            # R2가 보통(70%대)이거나 쪽수가 준수한 경우 형성평가 우수 수용
-            if pages >= 12 and cov_rate >= 70.0:
+            if pages >= 10 and cov_rate >= 70.0:
                 grade = "우수"
             else:
                 grade = "보통"
     elif cb_count == 4:
+        # Gate 4: 4/5 충족자는 형성평가 원칙에 따라 우수 상한 적용
         if r1 == "○" and pages >= 10 and cov_rate >= 70.0:
             grade = "우수"
         else:
             grade = "보통"
     else:
         grade = "보통"
-        
-    # 특수 우수 학생 등급 확정
-    if sid in ['20173822', '20241375', '20231308', '20241410', '20241401', '20241382', '20241448', '20241390', '20241405', '20221416', '20241395', '20241396']:
-        grade = "매우 우수 후보"
         
     # 1단락 피드백 문장 작성
     missing_str = ", ".join(missing_stages) if missing_stages else "세부 측정 지표"
@@ -512,6 +558,20 @@ for idx, f in enumerate(files, 1):
     else:
         fb_para = f"필수 기재 항목({defect})이 누락되어 미흡 판정되었습니다. 가이드라인에 명시된 출처 표기 및 AI 활용 표기 규정을 준수하여 재작성 바랍니다."
 
+    # 비실증 논문 선정 시 종합 평가 피드백에 권고사항 추가
+    if not is_hd and "미제출" not in grade and defect == "없음":
+        hypo_advice = (
+            " ※ [탐구 논문 선정 권고] 본 학습일지에서 선정한 논문은 문헌고찰/이론고찰 연구로, "
+            "클로드 베르나르 5단계 분석의 본래 취지인 '가설연역적(Hypothetico-deductive) 실증 논문'과는 다소 차이가 있습니다. "
+            "향후 탐구학습에서는 통제된 중재와 정량적 데이터가 제시된 실증 연구 논문을 선정하여 분석하시기를 권장합니다."
+        )
+        fb_para += (" " + hypo_advice)
+
+    # 형식 체크리스트 미흡점은 등급 강등 없이 피드백에 보완 권고로 기술 (형성평가 원칙)
+    if format_flaws and "미제출" not in grade and defect == "없음":
+        flaws_str = ", ".join(format_flaws)
+        fb_para += f" ※ [편집 규격 보완 권고] 다음 과제 제출 시에는 형식 규격({flaws_str})을 함께 보완해 주시기 바랍니다."
+
     evaluated_records.append({
         'idx': idx,
         'sid': sid,
@@ -525,13 +585,16 @@ for idx, f in enumerate(files, 1):
         's1': f"{cov_grade} ({cov_rate:.0f}%)",
         'cov_rate': cov_rate,
         'cov_grade': cov_grade,
-        's2': f"충족 ({cb_count}/5)" if cb_count == 5 else f"미완결 ({cb_count}/5)",
+        's2': s2_grade,
         'cb_score': f"{cb_count}/5",
         's3': "매우우수" if (pages >= 15 and has_s3) else "우수",
         's4': "우수",
         'indicators': indicator_str,
         'feedback': fb_para,
         'paper_title': paper_title,
+        'is_hd': is_hd,
+        'hypo_reason': hypo_reason,
+        'hypo_status': "가설연역 실증" if is_hd else "비실증 고증/종설(우수 상한)",
         'defect': defect,
         'r1': r1,
         'r2': r2,
@@ -577,7 +640,7 @@ ws1.title = "종합 평가표"
 ws1.views.sheetView[0].showGridLines = True
 
 ws1.cell(1, 1, "경혈학2 7차 학습일지(족태양방광경) 교수자 평가 및 피드백 종합표").font = font_title
-ws1.cell(2, 1, "평가 근거: 「경혈학 학습일지 평가 지침(루브릭)」 (2026.9 개정 / 2026-10-23 완화 개정판 준수) · 상용경혈(필수·우선순위 40혈) 충실도 분석 반영").font = font_subtitle
+ws1.cell(2, 1, "평가 근거: 「경혈학 학습일지 평가 지침(루브릭 v3.4)」 5단계 관문(Gate 0~4) 체계 준수 · 상용경혈(필수·우선순위 40혈) 충실도 분석 반영").font = font_subtitle
 
 headers1 = [
     "연번", "학번", "성명", "제출 파일명", "쪽수", "7차 제안 등급",
@@ -629,7 +692,7 @@ ws2 = wb.create_sheet(title="항목별 세부 근거 및 질의응답")
 ws2.views.sheetView[0].showGridLines = True
 
 ws2.cell(1, 1, "경혈학2 7차 학습일지(족태양방광경) 항목별 세부 판정 근거 및 질의응답").font = font_title
-ws2.cell(2, 1, "클로드 베르나르 5단계 과학적 방법론(Q·M·Mea·R·I) 및 요건(R1~R6), 결격사유(D1~D8), 상용경혈 충실도 전수 대조").font = font_subtitle
+ws2.cell(2, 1, "5단계 관문(Gate 0~4) 체계, 클로드 베르나르 가설연역 실증 5단계(Q·M·Mea·R·I), 요건(R1~R6), 결격사유(D1~D8), 상용경혈 충실도 전수 대조").font = font_subtitle
 
 headers2 = [
     "연번", "학번", "성명", "7차 제안 등급", "선정 탐구 논문 / 고전 문헌",
@@ -647,7 +710,7 @@ ws2.row_dimensions[4].height = 28
 
 for row_idx, r in enumerate(evaluated_records, 5):
     row_data = [
-        r['idx'], r['sid'], r['name'], r['grade'], r['paper_title'],
+        r['idx'], r['sid'], r['name'], r['grade'], f"{r['paper_title']} [{r['hypo_status']}]",
         f"{r['cov_rate']:.1f}% ({r['cov_grade']})", r['defect'],
         r['r1'], r['r2'], r['r3'], r['r4'], r['r5'], r['r6'],
         r['student_question'], r['professor_answer']
@@ -702,10 +765,10 @@ c7_bad = counts_7['미흡']
 c7_nosub = counts_7.get('미제출', 0)
 
 stat_data = [
-    ["매우 우수 후보", "12명 (25.0%)", "38명 (79.2%)", f"{c7_super}명 ({c7_super/total_students*100:.1f}%)", "고난도 방광경(40혈) 엄격 적용", "5단계 5/5 완결 + 충실도 90%↑ + 지표 4개 이상"],
-    ["우수", "13명 (27.1%)", "6명 (12.5%)", f"{c7_good}명 ({c7_good/total_students*100:.1f}%)", "형성평가 완화 루브릭 반영", "5단계 5/5 완결자 및 성실 4/5 포함 (충실도 70%↑)"],
+    ["매우 우수 후보", "12명 (25.0%)", "38명 (79.2%)", f"{c7_super}명 ({c7_super/total_students*100:.1f}%)", "5단계 관문(Gate 3) 엄격 적용", "가설연역 실증 5/5 완결 + 충실도 90%↑ + 본인작성/심층성찰"],
+    ["우수", "13명 (27.1%)", "6명 (12.5%)", f"{c7_good}명 ({c7_good/total_students*100:.1f}%)", "형성평가 및 상한(Gate 4) 적용", "5단계 5/5 완결자, 비실증 상한자 및 성실 4/5 포함 (충실도 70%↑)"],
     ["보통", "19명 (39.6%)", "4명 (8.3%)", f"{c7_normal}명 ({c7_normal/total_students*100:.1f}%)", "경혈 충실도 및 5단계 보완 필요", "방광경 상용경혈 누락(70%↓) 또는 5단계 미비자"],
-    ["미흡", "4명 (8.3%)", "0명 (0.0%)", f"{c7_bad}명 ({c7_bad/total_students*100:.1f}%)", "결격 사유(D1~D8) 해당자", "파일 손상(0쪽) 업로드 오류 1명"],
+    ["미흡", "4명 (8.3%)", "0명 (0.0%)", f"{c7_bad}명 ({c7_bad/total_students*100:.1f}%)", "결격 사유(D1~D8) 해당자", "필수 항목 결여 또는 분량 미달"],
     ["미제출", "0명 (0.0%)", "0명 (0.0%)", f"{c7_nosub}명 ({c7_nosub/total_students*100:.1f}%)", "기한 내 전원 100% 제출 달성", "수강생 48명 전원 제출 완료"],
     ["합계", "48명 (100%)", "48명 (100%)", f"{total_students}명 (100%)", "-", "전체 수강생 48명 전수 평가 완료"]
 ]
@@ -723,10 +786,10 @@ ws3.cell(12, 1, "■ 7차(족태양방광경) 학습일지 교수자 종합 총�
 ws3.merge_cells('A13:F18')
 box_cell = ws3.cell(13, 1)
 box_cell.value = (
-    "1. 전원 제출 달성: 수강생 48명 전원이 기한 내 과제를 제출하여 매우 모범적인 학업 성실도를 보여주었습니다.\n"
-    "2. 족태양방광경 상용경혈(40혈) 충실도 반영: 67개 혈위 중 40대 필수·우선순위 경혈에 대한 학습 포함율 분석 결과, 대다수(77% 이상) 학생이 90% 이상의 매우 우수한 충실도로 방대한 방광경을 완벽히 정리하였습니다. 일부 배수혈과 하지 취혈을 생략한 학생(70% 미만)에게는 구체적인 보완 피드백을 부여했습니다.\n"
-    "3. 과학적 탐구 역량의 비약적 성장: 클로드 베르나르 5단계 과학적 방법론(Q·M·Mea·R·I)을 온전히 적용한 학생이 44명(91.7%)에 달하며, 특히 지음혈(BL67)의 자율신경 반사, 팔료혈(BL31~BL34)의 골반내장신경 자극, 배수혈의 체성-내장 반사 등 수준 높은 신경해부학적 질문을 제기하였습니다.\n"
-    "4. 보완 권고사항: 손상된 파일(0쪽)로 제출된 1명(김수연)은 정상 파일 재제출을 통한 소명이 필요하며, 다음 8차 과제에서는 통계적 유의성(p값)과 함께 임상적 효과 크기(Effect size)를 함께 해석하는 고찰을 권장합니다."
+    "1. 전원 제출 달성: 수강생 48명 전원이 기한 내 과제를 제출하여 모범적인 학업 성실도를 보여주었습니다.\n"
+    "2. 족태양방광경 상용경혈(40혈) 충실도 반영: 67개 혈위 중 40대 필수·우선순위 경혈에 대한 학습 포함율 분석 결과, 대다수 학생이 90% 이상의 매우 우수한 충실도로 방대한 방광경을 체계적으로 정리하였습니다. 일부 배수혈과 하지 취혈을 생략한 학생(70% 미만)에게는 구체적인 보완 피드백을 부여했습니다.\n"
+    "3. 클로드 베르나르 5단계 가설연역적 실증 논문 평가: 개정 루브릭 v3.4에 따라 관찰-가설-통제실험-결과-해석의 가설연역적 실증 연구(실험/임상/RCT)를 선정하고 5단계를 완결한 과제를 '매우 우수 후보'로 선발하였습니다. 고전문헌 고증이나 체계적 문헌고찰 등 비실증 연구를 선정한 학생은 루브릭 상한(Gate 4)에 따라 최고 '우수'로 상한을 적용하고 향후 실증 연구 선정을 권고하였습니다.\n"
+    "4. 형성평가 및 형식 피드백 강화: 표준 파일명 규격, 본문 [1] 어깨번호, 이미지 출처 등 형식 점검 결과는 학생의 등급을 깎지 않고 피드백에 보완 권고사항으로 기술하여 학생들의 자발적 성장을 유도하였습니다."
 )
 box_cell.font = font_data
 box_cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
