@@ -329,6 +329,45 @@ def extract_student_question(full_text: str, default_topic: str = "경혈학") -
 
     return f"{default_topic} 경혈 임상 적용 기전 의문"
 
+def check_hypothetico_deductive_paper(paper_title: str, full_text: str = "") -> tuple[bool, str]:
+    """
+    클로드 베르나르(Claude Bernard)의 실험적 추론 5단계 분석 적합성 평가:
+    관찰에서 시작해 명확한 가설을 세우고, 통제된 실험을 통해 이를 검증한 뒤 새로운 후속 가설로 이어지는
+    가설연역적(Hypothetico-deductive) 실증 논문(실험/임상 연구)인지 판별.
+    """
+    if not paper_title:
+        return False, "논문 제목 확인 불가"
+
+    title_lower = paper_title.lower()
+
+    # 1. 비실증 / 문헌고찰 / 고전원전 / 종설 키워드 필터링
+    lit_keywords = [
+        '고전 원전', '갑을경', '표유부', '비교 연구', '도교', '고전문헌', '문헌고찰',
+        '문헌 연구', '종설', 'review', '체계적 문헌고찰', '역사적', '문헌적', '고서', '변증론치'
+    ]
+    for kw in lit_keywords:
+        if kw in title_lower:
+            return False, f"비실증 문헌연구/종설('{kw}')"
+
+    # 2. 가설연역적 실증 논문 키워드 매칭 (통제 처치 및 정량 측정 연구)
+    emp_keywords = [
+        '효과', '기전', '영향', '전침', '자침', '자극', 'acupuncture', 'electroacupuncture',
+        'spinal', 'brain', '실험', '임상', '대조', '무작위', 'rct', 'rat', '마우스', '환자',
+        '신경', '세포', '통증', '염증', '보호', '발현', '억제', '조절', '기능', 'gv', '대추', '백회',
+        'fever', '체온', '사혈', '허혈', '뇌경색', '중추'
+    ]
+    if any(kw in title_lower for kw in emp_keywords):
+        return True, "가설연역적 실증 논문 부합"
+
+    # 3. 본문 텍스트 내 실험설계(Sham, 통계치 p< 등) 보조 검증
+    if full_text:
+        has_control = any(k in full_text for k in ['대조군', 'sham', 'control', '위약'])
+        has_stats = any(k in full_text for k in ['p<', 'p <', '유의성', 't-test', 'anova'])
+        if has_control and has_stats:
+            return True, "본문 실험설계 기반 가설연역적 실증 연구 부합"
+
+    return False, "통제된 실험/임상 중재 및 정량적 측정이 불분명한 연구"
+
 def load_history(prev4_path, prev5_path):
     """직전 4차 및 5차 평가 이력 로드"""
     hist_4 = {}
@@ -517,6 +556,9 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         if has_images_mentioned and not has_image_sources:
             format_flaws.append("삽입 이미지별 출처 명시")
 
+        # 클로드 베르나르 5단계 가설연역적(Hypothetico-deductive) 실증 논문 적합성 검증
+        is_hypo_deductive, hypo_reason = check_hypothetico_deductive_paper(paper_title, full_text)
+
         # 요건 판정 (R1~R6) - R5: 오직 "본문에 부합하는 참고문헌 양식 4종 준수" 여부만 반영 (기타 형식 결함은 등급에 미반영)
         r1 = "○" if (has_s1 and has_s2 and has_s3 and has_s4) else "×"
         r2 = "○" if (pages >= 10 and cov_rate >= 80.0) else ("△" if (pages >= 5 and cov_rate >= 70.0) else "×")
@@ -525,9 +567,19 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         r5 = "○" if (has_s4 and looks_like_valid_title(paper_title)) else "△"
         r6 = "○" if has_ai else "×"
 
+        # 자가 탐구학습(R3) 평가: 가설연역적 실증 논문 기준 충족 시 '매우우수', 미충족 시 최대 '우수' 상한
+        if cb_count == 5 and is_hypo_deductive:
+            s2_grade = "매우우수"
+        elif cb_count >= 4:
+            s2_grade = "우수"
+        else:
+            s2_grade = f"보통 ({cb_count}/5)"
+
         # 매우우수 심층 지표 판정 (단계 3 루브릭)
         indicators = []
-        if cb_count == 5:
+        if cb_count == 5 and is_hypo_deductive:
+            indicators.append("가설연역 실증 5단계 완결")
+        elif cb_count == 5:
             indicators.append("5단계 분석 완결")
         if cov_rate >= 90.0:
             indicators.append(f"상용경혈 충실도 매우우수({cov_rate:.0f}%)")
@@ -575,8 +627,9 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             # 5단계 5/5 완결
             if r1 == "○" and r2 == "○" and r3 == "○" and r4 == "○" and r5 == "○" and r6 == "○":
                 if indicator_count >= 4 and ("우수" in fb_reflection):
-                    # [매우 우수 필수 기준] 요약 및 토론 섹션 본인 직접 작성 표기 또는 독자적 고찰 입증
-                    if has_s3_self_declared or ("선행 연구 한계 비판" in indicators and "학술적 심층 질문" in indicators):
+                    # [매우 우수 필수 기준 1] 가설연역적 실증 논문 적합성 충족 (미충족 시 최대 우수 상한)
+                    # [매우 우수 필수 기준 2] 요약 및 토론 섹션 본인 직접 작성 표기 또는 독자적 고찰 입증
+                    if is_hypo_deductive and (has_s3_self_declared or ("선행 연구 한계 비판" in indicators and "학술적 심층 질문" in indicators)):
                         grade = "매우 우수 후보"
                     else:
                         grade = "우수"
@@ -650,6 +703,15 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         else:
             fb_para = f"필수 기재 항목({defect})이 누락되어 미흡 판정되었습니다. 가이드라인에 명시된 출처 표기 및 AI 활용 표기 규정을 준수하여 재작성 바랍니다."
 
+        # 가설연역적 실증 논문 미충족 시 종합 평가 피드백에 권고사항 추가
+        if not is_hypo_deductive and "미제출" not in grade and defect == "없음":
+            hypo_advice = (
+                " 아울러 클로드 베르나르(Claude Bernard)의 실험적 추론 5단계 분석에는 관찰에서 시작해 명확한 가설을 세우고, "
+                "통제된 실험을 통해 이를 검증한 뒤 새로운 후속 가설로 이어지는 가설연역적(Hypothetico-deductive) 실증 논문이 가장 적합하므로, "
+                "차후 과제에서는 통제된 중재와 정량적 측정이 수반된 실험/임상 연구 논문을 우선적으로 선정하여 탐구하시길 권고합니다."
+            )
+            fb_para += hypo_advice
+
         # 형식 체크리스트 미흡점은 등급을 낮추지 않고 피드백에 보완 권고로 기술 (형성평가 원칙)
         if format_flaws and "미제출" not in grade and "D2" not in defect:
             flaws_str = ", ".join(format_flaws)
@@ -665,7 +727,7 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             'h4_grade': h4_grade,
             'fb_reflection': fb_reflection,
             's1': "매우우수" if (pages >= 20 and has_s1) else "우수",
-            's2': f"충족 ({cb_count}/5)" if cb_count == 5 else f"미완결 ({cb_count}/5)",
+            's2': s2_grade,
             'cb_score': f"{cb_count}/5",
             's3': "매우우수" if (pages >= 15 and has_s3) else "우수",
             's4': "우수",
