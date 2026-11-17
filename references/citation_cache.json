@@ -1,0 +1,22 @@
+{
+  "doi:10.1155/2015/904926": {
+    "status": "VERIFIED",
+    "verified": true,
+    "is_fake": false,
+    "title": "Acupuncture for Functional Dyspepsia: A Single Blinded, Randomized, Controlled Trial",
+    "authors": [
+      "Jin",
+      "Zhao",
+      "Zhou"
+    ],
+    "year": 2015,
+    "source": "Crossref DOI"
+  },
+  "doi:10.9999/fake.doi.98765": {
+    "status": "FAKE_DOI_404",
+    "verified": false,
+    "is_fake": true,
+    "reason": "확인되지 않는 가짜 DOI (Crossref 404 Not Found)",
+    "error": "DOI Not Found"
+  }
+}

@@ -14,6 +14,11 @@ import unicodedata
 from collections import Counter
 
 try:
+    from citation_verifier import CitationVerifier
+except ImportError:
+    from scripts.citation_verifier import CitationVerifier
+
+try:
     import fitz  # pymupdf
 except ImportError:
     print("Warning: PyMuPDF(fitz) not found. Run 'pip install pymupdf'")
@@ -469,6 +474,11 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         found_acupoints = cov_found if cov_found else [name for k, name in ACUPOINTS.items() if k in clean_text]
         focal_points = ", ".join(found_acupoints[:3]) if found_acupoints else "대추(GV14), 백회(GV20)"
 
+        # DOI 추출 및 D2 허위 출처 검증 (Crossref / PubMed API 연동)
+        doi_m = DOI_RE.search(full_text)
+        found_doi = doi_m.group(1).rstrip('.,;)]') if doi_m else None
+        cit_result = citation_verifier.verify_citation(paper_title=paper_title, doi=found_doi, text_context=full_text)
+
         # 직전 회차 이력 조회
         h4 = hist_4.get(sid, {})
         h5 = hist_5.get(sid, {})
@@ -478,7 +488,9 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
 
         # 결격 사유 (D1~D8)
         defect = "없음"
-        if pages < 5:
+        if cit_result.get('is_fake'):
+            defect = cit_result.get('defect') or "D2(허위 출처)"
+        elif pages < 5:
             defect = "D1(분량 미달)"
         elif not has_s4:
             defect = "D1(출처 미기재)"
@@ -612,6 +624,11 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
                     f"학술 논문이나 문헌 탐구 시 단순 요약에 그치지 않고, 연구의 구체적 조작(중재) 방법과 측정 변수, 이에 대한 객관적 해석을 단계별로 빠짐없이 작성해야 상위 등급 획득이 가능합니다. "
                     f"다음 7차 학습일지에서는 안내된 표준템플릿을 활용하여 작성해 주시기 바랍니다."
                 )
+        elif "D2" in defect:
+            fb_para = (
+                f"자가 탐구학습에 기재된 출처(DOI 또는 논문명)를 학술 데이터베이스(Crossref/PubMed)로 교차 검증한 결과 실존하지 않는 허위 출처({defect})로 확인되어 결격 사유로 '미흡' 판정합니다. "
+                f"생성형 AI 환각으로 인한 허위 서지 생성을 검증 없이 제출하는 행위는 연구윤리 위반에 해당하므로, 실제 열람한 정규 학술 논문의 DOI와 서지를 정확히 명시하여 즉시 소명하시기 바랍니다."
+            )
         else:
             fb_para = f"필수 기재 항목({defect})이 누락되어 미흡 판정되었습니다. 가이드라인에 명시된 출처 표기 및 AI 활용 표기 규정을 준수하여 재작성 바랍니다."
 
@@ -632,6 +649,7 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             'indicators': indicator_str,
             'feedback': fb_para,
             'paper_title': paper_title,
+            'citation_detail': cit_result.get('detail', ''),
             'defect': defect,
             'r1': r1, 'r2': r2, 'r3': r3, 'r4': r4, 'r5': r5, 'r6': r6,
             'question': student_question,
