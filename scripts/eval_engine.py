@@ -499,7 +499,25 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         elif not (has_s1 and has_s2 and has_s3):
             defect = "D8(필수 섹션 결여)"
 
-        # 요건 판정 (R1~R6) - R2: 상용경혈(필수·우선순위) 충실도(80%↑ 우수) 및 분량 반영
+        # 4. 형식·출처 체크리스트(§4) 분석 (R5 판정 반영 원칙: 등급 강등 없이 피드백 권고로 기술)
+        format_flaws = []
+        pdf_basename = os.path.basename(pdf_path)
+        # 파일명 규격 검사 (예: 06차_홍길동_20210001_독맥.pdf)
+        if not re.search(r'^\d{1,2}차_[가-힣]{2,4}_\d{6,10}_.+\.pdf$', pdf_basename):
+            format_flaws.append("표준 파일명 규격([회차]_[이름]_[학번]_[주제].pdf)")
+
+        # 본문 인용 어깨번호 [1] 표기 검사
+        has_bracket_citation = bool(re.search(r'\[\d+\]', full_text))
+        if not has_bracket_citation:
+            format_flaws.append("본문 인용문 끝 [1] 어깨번호 표기")
+
+        # 이미지 출처 표기 검사 (본문에 그림/사진 언급이 있으나 출처 명기가 모호한 경우)
+        has_images_mentioned = bool(re.search(r'(그림\s*\d|사진\s*\d|Fig(?:ure)?\.?\s*\d)', full_text, re.I))
+        has_image_sources = bool(re.search(r'(그림\s*출처|사진\s*출처|이미지\s*출처|Source\s*:)', full_text, re.I))
+        if has_images_mentioned and not has_image_sources:
+            format_flaws.append("삽입 이미지별 출처 명시")
+
+        # 요건 판정 (R1~R6) - R5: 오직 "본문에 부합하는 참고문헌 양식 4종 준수" 여부만 반영 (기타 형식 결함은 등급에 미반영)
         r1 = "○" if (has_s1 and has_s2 and has_s3 and has_s4) else "×"
         r2 = "○" if (pages >= 10 and cov_rate >= 80.0) else ("△" if (pages >= 5 and cov_rate >= 70.0) else "×")
         r3 = "○" if cb_count == 5 else "△"  # 엄격 적용: 5/5만 ○, 4/5 이하는 △
@@ -631,6 +649,11 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             )
         else:
             fb_para = f"필수 기재 항목({defect})이 누락되어 미흡 판정되었습니다. 가이드라인에 명시된 출처 표기 및 AI 활용 표기 규정을 준수하여 재작성 바랍니다."
+
+        # 형식 체크리스트 미흡점은 등급을 낮추지 않고 피드백에 보완 권고로 기술 (형성평가 원칙)
+        if format_flaws and "미제출" not in grade and "D2" not in defect:
+            flaws_str = ", ".join(format_flaws)
+            fb_para += f" 아울러 다음 과제 제출 시에는 편집 규격({flaws_str})을 함께 보완해 주시기 바랍니다."
 
         evaluated_records.append({
             'sid': sid,
