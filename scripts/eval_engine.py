@@ -360,6 +360,8 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
         has_s4 = any(k in clean_text for k in ['출처', '참고문헌', '참고자료', 'references', 'doi:', '서지'])
         has_ai = any(k in clean_text for k in ['ai활용', '인공지능', 'ai표기', 'chatgpt', 'claude', 'gemini', '생성형ai', '인공지능활용', 'ai미사용', '생성형'])
         has_ai_detail = any(k in clean_text for k in ['gpt-4', 'gpt-3', '4o', '프롬프트', '질의문', 'prompt', '버전', 'version', 'claude-3', 'gemini-1', '모델:', '버전:'])
+        # 요약 및 토론(30%) 섹션의 학생 본인 직접 작성 표기 (매우 우수 필수 관문 요건)
+        has_s3_self_declared = any(k in clean_text for k in ['직접작성', '본인작성', '본인이직접', '학생본인', '직접사유', 'ai생성이아닌', 'ai미사용', 'ai도움없이', '생성형ai미사용', '본인확인'])
 
         # CID 폰트 글리프 깨짐 예외 처리
         if sid in ['20231308', '20241390']:  # 강동욱, 김휘연
@@ -441,6 +443,8 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             indicators.append("유기적 비교표/통합")
         if has_s4 and has_ai:
             indicators.append("참고문헌/AI 표기 투명성")
+        if has_s3_self_declared:
+            indicators.append("토론 본인직접작성 표기")
         
         indicator_count = len(indicators)
         indicator_str = f"{indicator_count}개 충족 ({', '.join(indicators[:2])})" if indicators else "해당 없음"
@@ -475,7 +479,11 @@ def evaluate_folder(target_dir, prev4_path=None, prev5_path=None, output_path=No
             # 5단계 5/5 완결
             if r1 == "○" and r2 == "○" and r3 == "○" and r4 == "○" and r5 == "○" and r6 == "○":
                 if indicator_count >= 4 and ("우수" in fb_reflection):
-                    grade = "매우 우수 후보"
+                    # [매우 우수 필수 기준] 요약 및 토론 섹션 본인 직접 작성 표기 또는 독자적 고찰 입증
+                    if has_s3_self_declared or ("선행 연구 한계 비판" in indicators and "학술적 심층 질문" in indicators):
+                        grade = "매우 우수 후보"
+                    else:
+                        grade = "우수"
                 else:
                     grade = "우수"
             else:
