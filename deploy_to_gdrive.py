@@ -8,7 +8,7 @@ import atexit, os, sys, shutil, argparse
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-LOCAL_REPO = r"C:\workspace\학습일지 평가"
+LOCAL_REPO = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DEST = r"G:\내 드라이브\강의\04_평가 및 학습활동 자료\학습일지 평가"
 
 def resolve_gdrive_dest():
